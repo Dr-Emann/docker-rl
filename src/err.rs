@@ -46,7 +46,7 @@ impl DrlErr {
     }
 
     /// Prints message and exits with code
-    pub fn err_out(&self) {
+    pub fn err_out(&self) -> ! {
         eprintln!("{}", &self.msg);
         process::exit(self.ret as i32);
     }
