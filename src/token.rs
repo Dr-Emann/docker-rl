@@ -22,14 +22,14 @@ impl Token {
     }
 }
 
+const DOCKER_URL: &str = "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull";
 
 /// Get anonymous token from `docker.io`
 ///
 /// Returns `Token` with JWT token info
 pub async fn get_anon_token() -> DrlResult<Token> {
-    let url = "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull";
     let client = Client::new();
-    let req = client.get(url);
+    let req = client.get(DOCKER_URL);
 
     // send request
     let resp = match req.send().await {
@@ -83,11 +83,9 @@ pub async fn get_anon_token() -> DrlResult<Token> {
 /// * `pass` - `String` with passphrase
 ///
 pub async fn get_userpass_token(user: String, pass: String) -> DrlResult<Token> {
-    let url = "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull";
-    let wrapped_pass = Some(pass);
     let client = Client::new();
-    let req = client.get(url);
-    let req = req.basic_auth(&user, wrapped_pass);
+    let req = client.get(DOCKER_URL);
+    let req = req.basic_auth(&user, Some(pass));
 
     // actually send request
     let resp = match req.send().await {
