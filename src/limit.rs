@@ -69,8 +69,9 @@ pub async fn get_limit(t: &Token) -> DrlResult<String> {
     };
 
     // limit needs to be parsed from the form limit;w=window
-    let tokens: Vec<&str> = limit.split(';').collect();
-    let limit = String::from(tokens[0]);
+    let mut tokens = limit.split(';');
+    // There will always be at least one item in the split iterator
+    let limit = tokens.next().unwrap();
 
     // get remaining limit
     let remaining = match headers.get("ratelimit-remaining") {
@@ -92,8 +93,9 @@ pub async fn get_limit(t: &Token) -> DrlResult<String> {
     };
 
     // remaining pulls needs to be parsed from the form remaining;w=window
-    let tokens: Vec<&str> = remaining.split(';').collect();
-    let remaining = String::from(tokens[0]);
+    let mut tokens = remaining.split(';');
+    // There will always be at least one item in the split iterator
+    let remaining = tokens.next().unwrap();
 
     let msg = format!("{}/{}", remaining, limit);
     Ok(msg)
