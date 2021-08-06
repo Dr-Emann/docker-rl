@@ -60,12 +60,6 @@ where
 /// # Arguments
 ///
 /// `t` - `Token` JWT token from `docker.io`
-///
-/// # Panics
-///
-/// * Unexpected HTTP status codes
-/// * Missing rate limit information from headers
-/// * Parsing errors related to rate limit headers
 pub async fn get_limit(t: &Token) -> DrlResult<Limit> {
     let client = Client::new();
     let url = "https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest";
