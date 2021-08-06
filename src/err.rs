@@ -20,6 +20,12 @@ pub enum ExitCode {
     Parsing,
 }
 
+impl Default for ExitCode {
+    fn default() -> Self {
+        ExitCode::Ok
+    }
+}
+
 /// Wrapper around result to keep track of `ExitCode`s
 pub type DrlResult<T> = std::result::Result<T, DrlErr>;
 
@@ -31,7 +37,7 @@ impl fmt::Display for DrlErr {
 }
 
 /// Wrapper around exit code
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct DrlErr {
     /// Message to print on exit
     pub msg: String,
@@ -49,12 +55,5 @@ impl DrlErr {
     pub fn err_out(&self) -> ! {
         eprintln!("{}", &self.msg);
         process::exit(self.ret as i32);
-    }
-}
-
-impl Default for DrlErr {
-    /// Implement default to make clippy happy
-    fn default() -> Self {
-        Self::new(String::new(), ExitCode::Ok)
     }
 }

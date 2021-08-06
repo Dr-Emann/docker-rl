@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 
 /// Struct to hold token information
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Token {
     pub token: String,
     pub expires_in: usize,
@@ -18,20 +18,10 @@ pub struct Token {
 impl Token {
     /// Creates an empty token
     pub fn new() -> Token {
-        Token {
-            token: String::new(),
-            expires_in: 0,
-            issued_at: String::new(),
-        }
+        Token::default()
     }
 }
 
-impl Default for Token {
-    /// Implement default to make clippy happy
-    fn default() -> Self {
-        Self::new()
-    }
-}
 
 /// Get anonymous token from `docker.io`
 ///
