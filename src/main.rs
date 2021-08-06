@@ -73,17 +73,11 @@ async fn main() {
 
     // get auth token for docker hub
     let result = get_token(opts).await;
-    if let Err(e) = &result {
-        e.err_out();
-    }
-
-    let token = result.unwrap();
+    let token = result.unwrap_or_else(|e| e.err_out());
 
     // get limit from token
     let result = get_limit(&token).await;
-    if let Err(e) = &result {
-        e.err_out();
-    }
+    let limit = result.unwrap_or_else(|e| e.err_out());
 
-    println!("{}", result.unwrap());
+    println!("{}", limit);
 }
