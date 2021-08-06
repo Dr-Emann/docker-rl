@@ -41,28 +41,24 @@ use rpassword::read_password_from_tty;
 ///
 /// * `opts` - `Opts` struct with parsed options
 async fn get_token(opts: Opts) -> DrlResult<Token> {
-    let basic_auth: bool = opts.user.is_some();
+    let Opts { user, pass } = opts;
 
-    if basic_auth {
-        let user = opts.user.unwrap();
-        let pass = match &opts.pass {
-            Some(p) => String::from(p),
-            None => {
-                // rpassword docs say:
-                //   Prompt for a password on TTY (safest but not always most practical
-                //   when integrating with other tools or unit testing)
-                //
-                // should this have error handling?
+    if let Some(user) = user {
+        let pass = pass.unwrap_or_else(|| {
+            // rpassword docs say:
+            //   Prompt for a password on TTY (safest but not always most practical
+            //   when integrating with other tools or unit testing)
+            //
+            // should this have error handling?
 
-                let prompt = format!("Password for {}: ", user);
-                read_password_from_tty(Some(prompt.as_str())).unwrap()
-            }
-        };
+            let prompt = format!("Password for {}: ", user);
+            read_password_from_tty(Some(&prompt)).unwrap()
+        });
 
-        return get_userpass_token(user, pass).await;
+        get_userpass_token(user, pass).await
+    } else {
+        get_anon_token().await
     }
-
-    get_anon_token().await
 }
 
 /// Parses cmdline and prints rate limit
